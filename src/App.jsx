@@ -1,19 +1,24 @@
+import React, { useState } from 'react';
+
 import Navbar from ".././Utils/Components/Navbar.jsx"
-import StyledBtn from ".././Utils/Components/StyledBtn.jsx"
+import AddTransactionModal from ".././Utils/Components/AddTransactionModal"
 import { Route, Routes } from 'react-router-dom';
 import Dashboard from "./Pages/Dashboard"
-const App = () => (
-  <>
+const App = () =>{ 
+    const [AddModal, setHandleAdd] = useState(false);
+  return(
   <div className="hero">
     Hi my termux ap
-   <Navbar />
-   <StyledBtn />
-  </div>
-        <Routes>
+   <Navbar
+     handleAdd={setHandleAdd}
+     />
+   <AddTransactionModal
+     open={AddModal}
+     onClose={() => setHandleAdd(false)}
+     />
+    <Routes>
   <Route path="/" element={   <Dashboard />} />
-       <Route path="/a" element={   <Navbar />} />
-       <Route path="/b" element={   <Navbar />} />
   </Routes>
-  </>
-)
+  </div>
+)}
 export default App
