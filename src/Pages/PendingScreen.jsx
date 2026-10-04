@@ -1,10 +1,8 @@
-import PendingDetailSheet from "../../Utils/Components/PendingDetailSheet.jsx"
-      // <PendingDetailSheet/>
+import PendingDetailSheet from "@/Utils/Components/PendingDetailSheet"
 
 const PendingScreen = () => {
 	return(
     <div>
-
       <PendingDetailSheet/>
     </div>
 
