@@ -1,8 +1,7 @@
-// @ts-nocheck
 import { Box, Typography, LinearProgress } from "@mui/material";
 import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
 import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
-
+import { useNavigate } from 'react-router-dom';
 const C = {
   bg: "#0B0B14",
   card: "#15151F",
@@ -19,8 +18,16 @@ const C = {
   blue: "#3D9CFF",
   red: "#FF4D6A",
 }
+import {USER} from "@/constants"
 
 export default function Dashboard() {
+const navigate = useNavigate()
+  if (!USER) {
+	navigate("/signup")
+}
+
+  
+  
   return (
     <Box sx={{ minHeight: "100vh", bgcolor: C.bg, color: C.text, p: "18px", fontFamily: "'Geist','Inter',sans-serif", pb: "40px" }}>
 
@@ -84,7 +91,7 @@ export default function Dashboard() {
             <Typography sx={{ fontSize: 14, fontWeight: 800 }}>Pending Pays</Typography>
             <Box sx={{ bgcolor: C.red, color: "#fff", borderRadius: "20px", px: 1, py: 0.2, fontSize: 10, fontWeight: 800 }}>4</Box>
           </Box>
-          <Typography sx={{ fontSize: 12, color: C.text2, fontWeight: 600 }}>Pay all</Typography>
+          <Typography onClick={()=>navigate("/p")} sx={{ fontSize: 12, color: C.text2, fontWeight: 600 }}>Pay all</Typography>
         </Box>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
           {[
