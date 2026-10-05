@@ -1,8 +1,31 @@
 import { Box, Button, Card, TextField, Typography, Stack, Checkbox, FormControlLabel } from "@mui/material"
 import { useNavigate } from 'react-router-dom';
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import {auth} from "@/Firebase/index";
 
 export default function SignupScreen() {
   const navigate = useNavigate()
+
+const onSubmit = async () => {
+console.log("user");
+await createUserWithEmailAndPassword(auth, "ameen55668@gmail.com", "password")
+  .then((userCredential) => {
+    // Signed up 
+    const user = userCredential.user;
+console.log(user);
+    
+    // ...
+  })
+  .catch((error) => {
+console.log(error);
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    // ..
+  });
+};
+  
+
+  
   return (
     <Box sx={{ minHeight: "100vh", bgcolor: "#f8fafc", display: "flex", alignItems: "center", justifyContent: "center", p: 2 }}>
       <Card sx={{ width: 400, borderRadius: 5, p: 3.5, boxShadow: "0 20px 60px rgba(0,0,0,0.08)" }}>
@@ -20,7 +43,7 @@ export default function SignupScreen() {
 
           <FormControlLabel control={<Checkbox size="small" />} label={<Typography fontSize={12}>I agree to <Box component="span" fontWeight={700}>Terms & Privacy</Box></Typography>} />
 
-          <Button variant="contained" fullWidth sx={{ bgcolor: "#111827", borderRadius: 3, py: 1.4, textTransform: "none", fontWeight: 700 }}>Create Account</Button>
+          <Button onClick={onSubmit} variant="contained" fullWidth sx={{ bgcolor: "#111827", borderRadius: 3, py: 1.4, textTransform: "none", fontWeight: 700 }}>Create Account</Button>
         </Stack>
 
         <Box sx={{ bgcolor: "#f1f5f9", p: 1.5, borderRadius: 3, mt: 2.5, display: "flex", gap: 1 }}>

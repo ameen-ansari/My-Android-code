@@ -8,7 +8,7 @@ const App = () => {
   const [AddModal, setHandleAdd] = useState(false);
   
   // HARDCODED - change to true / false for testing
-  const usr = true; // <--- set false = guest, true = logged in
+  const usr = false; // <--- set false = guest, true = logged in
   const userData = { name: "Ahmad", email: "ahmad@test.com" };
 
   // Make it global so all pages can access
