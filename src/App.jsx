@@ -3,7 +3,7 @@ import Navbar from "@/Utils/Components/Navbar.jsx";
 import AddTransactionModal from "@/Utils/Components/AddTransactionModal";
 import AppRouter from "@/Pages/AppRouter";
 import GuestRouter from "@/Pages/GuestRouter";
-
+import "./index.css";
 const App = () => {
   const [AddModal, setHandleAdd] = useState(false);
   
@@ -11,7 +11,7 @@ const App = () => {
   const usr = false; // <--- set false = guest, true = logged in
   const userData = { name: "Ahmad", email: "ahmad@test.com" };
 
-  // Make it global so all pages can access
+  // Make it global so all pages can accesstr
   window.currentUser = userData;
   window.isLoggedIn = usr;
 
