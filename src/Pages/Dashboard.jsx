@@ -1,7 +1,8 @@
-import { Box, Typography, LinearProgress } from "@mui/material";
+import { Box, Button,Typography, LinearProgress } from "@mui/material";
 import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
 import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
-import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { logout } from '@/Store/profile';
 const C = {
   bg: "#0B0B14",
   card: "#15151F",
@@ -18,19 +19,16 @@ const C = {
   blue: "#3D9CFF",
   red: "#FF4D6A",
 }
-import {USER} from "@/constants"
 
 export default function Dashboard() {
-const navigate = useNavigate()
-  if (!USER) {
-	navigate("/signup")
-}
+  const dispatch = useDispatch();
+  const onLogout = () => {
+    dispatch(logout())
+  };
 
-  
-  
   return (
     <Box sx={{ minHeight: "100vh", bgcolor: C.bg, color: C.text, p: "18px", fontFamily: "'Geist','Inter',sans-serif", pb: "40px" }}>
-
+      <Button onClick={onLogout} fullWidth variant="outlined" sx={{ borderRadius: 3, textTransform: "none", color: "#111827", borderColor: "#e2e8f0", py: 1.2 }}>Logout</Button>
       {/* HEADER */}
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <Box>
@@ -91,7 +89,7 @@ const navigate = useNavigate()
             <Typography sx={{ fontSize: 14, fontWeight: 800 }}>Pending Pays</Typography>
             <Box sx={{ bgcolor: C.red, color: "#fff", borderRadius: "20px", px: 1, py: 0.2, fontSize: 10, fontWeight: 800 }}>4</Box>
           </Box>
-          <Typography onClick={()=>navigate("/p")} sx={{ fontSize: 12, color: C.text2, fontWeight: 600 }}>Pay all</Typography>
+          <Typography onClick={() => navigate("/p")} sx={{ fontSize: 12, color: C.text2, fontWeight: 600 }}>Pay all</Typography>
         </Box>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
           {[

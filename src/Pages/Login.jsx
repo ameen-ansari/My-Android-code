@@ -5,21 +5,26 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff"
 import { useNavigate } from 'react-router-dom';
 import { auth } from "@/Firebase/index";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { useDispatch } from 'react-redux';
+import { login } from '@/Store/profile';
 
 export default function LoginScreen() {
   const [ loading, setLoading ] = useState(false)
+  const dispatch = useDispatch();
   let myData = {}
   const navigate = useNavigate()
 
-  const onSubmit = async () => {
+  const onSubmit = async (e) => {
+    e.preventDefault()
     setLoading(true)
     if (myData?.email && myData?.pwd) {
       const user = await signInWithEmailAndPassword(auth, myData?.email, myData?.pwd)
       if (user?.user) {
-        localStorage.setItem("user", JSON.stringify(user?.user));
-        localStorage.setItem("token", JSON.stringify(user?.user?.uid));
+        dispatch(login({
+          user:user?.user,
+          token:user?.user?.uid
+        }))
         setLoading(false)
-        navigate("/")
       }
     } else {
       console.log("something went wrong");
@@ -41,8 +46,8 @@ export default function LoginScreen() {
         <Typography sx={{pb:2}} fontSize={13} color="text.secondary" >Login to manage your expenses</Typography>
 
         <Stack spacing={2} mt={3}>
-          <TextField name="email" onChange={onChangeHandler} label="Email Address" fullWidth size="small" sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} defaultValue="ameeen55668@email.com" />
-          <TextField name="pwd" onChange={onChangeHandler} label="Password" fullWidth size="small" type={"password"} sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} />
+          <TextField name="email" onChange={onChangeHandler} label="Email Address" fullWidth size="small" sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} defaultValue="ameeen55668@gmail.com" />
+          <TextField name="pwd" onChange={onChangeHandler} label="Password" fullWidth size="small" defaultValue="aminoooo" type={"password"} sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} />
           <Typography textAlign="right" fontSize={12} fontWeight={600} sx={{ cursor: "pointer" }}>Forgot password?</Typography>
           <Button  loading={loading} onClick={onSubmit} variant="contained" fullWidth sx={{ bgcolor: "#111827", borderRadius: 3, py: 1.4, textTransform: "none", fontWeight: 700, "&:hover": { bgcolor: "#000" } }}>Login</Button>
         </Stack>

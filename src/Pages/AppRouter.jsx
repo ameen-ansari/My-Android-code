@@ -8,6 +8,7 @@ import Login from "@/Pages/Login";
 import Forgetpwd from "@/Pages/Forgetpwd";
 import OTPScreen from "@/Pages/OTPScreen";
 import { Route, Routes } from 'react-router-dom';
+import * as R from 'react-router-dom';
 
 const AppRouter = () => (
   <Routes>
@@ -16,6 +17,7 @@ const AppRouter = () => (
         <Route path="/exscreen" element={<ExpensesScreen />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/budget" element={<Budget />} />
+        <Route path="*" element={<R.Navigate to="/" replace />} />
   </Routes>
 );
 

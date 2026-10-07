@@ -1,23 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from "@/Utils/Components/Navbar.jsx";
 import AddTransactionModal from "@/Utils/Components/AddTransactionModal";
 import AppRouter from "@/Pages/AppRouter";
 import GuestRouter from "@/Pages/GuestRouter";
 import "./index.css";
-const App = () => {
-  const [AddModal, setHandleAdd] = useState(false);
-  
-  // HARDCODED - change to true / false for testing
-  const usr = false; // <--- set false = guest, true = logged in
-  const userData = { name: "Ahmad", email: "ahmad@test.com" };
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-  // Make it global so all pages can accesstr
-  window.currentUser = userData;
-  window.isLoggedIn = usr;
+const App = () => {
+  const token = useSelector((state) => state?.profile?.token);
+  const navigate = useNavigate()
+  const [ AddModal, setHandleAdd ] = useState(false);
+
+  useEffect(() => {
+    if (!token) {
+      navigate("/login", { replace: true });
+    }
+  }, [ token ]);
 
   return (
     <div className="hero">
-      {usr ? (
+      {token ? (
         <div>
           <Navbar handleAdd={setHandleAdd} />
           <AddTransactionModal

@@ -9,18 +9,15 @@ export default function SignupScreen() {
   const onSubmit = async () => {
     if (myData?.email && myData?.pwd) {
       const user = await createUserWithEmailAndPassword(auth, myData?.email, myData?.pwd)
-      console.log(user);
     } else {
       console.log("something went wrong");
     }
-    console.log(myData);
   };
 
   const onChangeHandler = ({ target }) => {
     if (target) {
       myData = { ...myData, [ target?.name ]: target.value }
     }
-    console.log(myData);
   };
 
 
