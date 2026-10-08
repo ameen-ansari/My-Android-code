@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from "@/Utils/Components/Navbar.jsx";
 import AddTransactionModal from "@/Utils/Components/AddTransactionModal";
+import Toast from "@/Utils/Components/Toast";
 import AppRouter from "@/Pages/AppRouter";
 import GuestRouter from "@/Pages/GuestRouter";
 import "./index.css";
@@ -32,6 +33,7 @@ const App = () => {
       ) : (
         <GuestRouter />
       )}
+      <Toast />
     </div>
   );
 };
