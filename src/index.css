@@ -13,3 +13,8 @@
   margin: 20px auto !important;
   border-radius: 12px !important;
 }
+.card {
+  background: #FFFFFF !important;
+  border: 1px solid rgba(0,0,0,0.06) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05) !important;
+}

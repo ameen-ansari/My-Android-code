@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { forwardRef, useState } from 'react';
 import {
   Dialog, Box, Typography, TextField, Select, MenuItem,
   Chip, Switch, Button, IconButton, Slide
@@ -6,40 +6,64 @@ import {
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 
 const COLORS = {
-  bg: "#080808",
-  card: "#141414",
-  card2: "#1C1C1C",
-  border: "#232323",
-  text: "#FFFFFF",
-  text2: "#8A8A8E",
-  text3: "#5A5A5E",
+  bg: "#F5F7FA",
+  card: "#FFFFFF",
+  border: "#E9EBEF", // Fixed: was null
+  text: "#0F172A",
+  text2: "#64748B",
+  text3: "#94A3B8",
+  activeTag: "#0F172A",
 }
 
-const Transition = (props) => <Slide direction="up" {...props} />;
+const Transition = React.forwardRef((props, ref) => <Slide direction="up" ref={ref} {...props} />);
 
-export default function AddExpenseModal({ open, onClose }) {
-  const [expenseType, setExpenseType] = useState("Food");
-  const [account, setAccount] = useState("Cash");
-  const [tags, setTags] = useState(["Food"]);
+export default function AddExpenseModal({ open, onClose, onSave }) {
+  const [form, setForm] = useState({
+    amount: "",
+    expenseType: "Expense",
+    account: "Cash",
+    isDefault: false,
+    date: "2026-05-13",
+    time: "14:30",
+    tags: ["Food"],
+    note: ""
+  });
 
   const allTags = ["Food", "Travel", "Bills", "Office", "Personal", "Urgent"];
 
+  const handleTagToggle = (t) => {
+    setForm(prev => ({
+      ...prev,
+      tags: prev.tags.includes(t) ? prev.tags.filter(x => x !== t) : [...prev.tags, t]
+    }));
+  };
+
+  const handleSave = () => {
+    const finalData = {
+      ...form,
+      amount: Number(form.amount),
+      createdAt: new Date(`${form.date}T${form.time}`).toISOString(),
+    };
+    console.log("Expense Data:", finalData);
+    if(onSave) onSave(finalData); // send to parent
+    onClose();
+  };
+
+  const commonInputSx = {
+    "& .MuiOutlinedInput-root": {
+      bgcolor: COLORS.card,
+      borderRadius: "14px",
+      height: 52,
+      fontSize: 14,
+      fontWeight: 500,
+      "& fieldset": { borderColor: `${COLORS.border} !important`, borderWidth: "1px" },
+      "&:hover fieldset": { borderColor: "#D1D5DB !important" },
+      "&.Mui-focused fieldset": { borderColor: "#0F172A !important" },
+    }
+  };
+
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      fullScreen
-      TransitionComponent={Transition}
-      PaperProps={{
-        sx: {
-          bgcolor: COLORS.bg,
-          color: COLORS.text,
-          backgroundImage: "none",
-          fontFamily: "'Geist','Inter',sans-serif"
-        }
-      }}
-    >
-      {/* CONTAINER */}
+    <Dialog open={open} onClose={onClose} fullScreen TransitionComponent={Transition}>
       <Box sx={{
         p: "20px 18px",
         display: "flex",
@@ -48,126 +72,92 @@ export default function AddExpenseModal({ open, onClose }) {
         height: "100%",
         overflowY: "auto",
         bgcolor: COLORS.bg,
-          color: COLORS.text,
-          backgroundImage: "none",
         '&::-webkit-scrollbar': { display: 'none' }
       }}>
 
-        {/* HEADER - Pro */}
+        {/* HEADER */}
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Box>
-            <Typography sx={{ fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1.1 }}>Add expense</Typography>
-            <Typography sx={{ fontSize: 13, color: COLORS.text2, mt: 0.5, fontWeight: 400 }}>Track where your money goes</Typography>
+            <Typography sx={{ fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>Add expense</Typography>
+            <Typography sx={{ fontSize: 13, color: COLORS.text2, mt: 0.5 }}>Track where your money goes</Typography>
           </Box>
-          <IconButton onClick={onClose} sx={{ width: 36, height: 36, bgcolor: COLORS.card, border: `1px solid ${COLORS.border}`, color: COLORS.text2 }}>
+          <IconButton onClick={onClose} sx={{ width: 36, height: 36, bgcolor: COLORS.card, border: `1px solid ${COLORS.border}` }}>
             <CloseRoundedIcon sx={{ fontSize: 18 }} />
           </IconButton>
         </Box>
 
-        {/* AMOUNT - Hero Card */}
-        <Box sx={{
-          bgcolor: COLORS.card,
-          border: `1px solid ${COLORS.border}`,
-          borderRadius: "20px",
-          p: 2.2,
-        }}>
+        {/* AMOUNT */}
+        <Box sx={{ bgcolor: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: "20px", p: 2.2, boxShadow: "0 2px 12px rgba(0,0,0,0.04)" }}>
           <Typography sx={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.14em", color: COLORS.text3 }}>AMOUNT</Typography>
-          <Box sx={{ display: "flex", alignItems: "baseline", mt: 1.5, gap: 1 }}>
-            <Typography sx={{ fontSize: 32, fontWeight: 300, color: COLORS.text3 }}>₹</Typography>
+          <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
+            <Typography sx={{ fontSize: 24, fontWeight: 400, color: COLORS.text3, mr: 1 }}>Rs.</Typography>
             <TextField
               variant="standard"
               placeholder="0"
               type="number"
               fullWidth
+              value={form.amount}
+              onChange={(e) => setForm({...form, amount: e.target.value})}
               InputProps={{
                 disableUnderline: true,
-                sx: {
-                  fontSize: 44, fontWeight: 700, letterSpacing: "-0.03em", color: COLORS.text,
-                  "& input::placeholder": { color: "#2A2A2A" }
-                }
+                sx: { fontSize: 44, fontWeight: 700, color: COLORS.text, }
               }}
             />
           </Box>
         </Box>
 
-        {/* FIELDS GRID */}
+        {/* TYPE + ACCOUNT */}
         <Box sx={{ display: "flex", gap: 1.5 }}>
-          {[
-            { label: "EXPENSE TYPE", value: expenseType, setter: setExpenseType, options: ["Food", "Transport", "Shopping", "Rent"] },
-            { label: "ACCOUNT", value: account, setter: setAccount, options: ["Cash", "Bank", "UPI", "Card"] },
-          ].map((f) => (
-            <Box key={f.label} sx={{ flex: 1 }}>
-              <Typography sx={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.1em", color: COLORS.text3, mb: 1 }}>{f.label}</Typography>
-              <Select
-                fullWidth
-                value={f.value}
-                onChange={e => f.setter(e.target.value)}
-                sx={{
-                  bgcolor: COLORS.card,
-                  color: COLORS.text,
-                  borderRadius: "14px",
-                  height: 52,
-                  fontSize: 14, fontWeight: 500,
-                  "& fieldset": { borderColor: `${COLORS.border} !important` },
-                  "& .MuiSvgIcon-root": { color: COLORS.text3 }
-                }}
-              >
-                {f.options.map(o => <MenuItem key={o} value={o} sx={{ fontSize: 14 }}>{o}</MenuItem>)}
-              </Select>
-            </Box>
-          ))}
+          <Box sx={{ flex: 1 }}>
+            <Typography sx={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.1em", color: COLORS.text3, mb: 1 }}>EXPENSE TYPE</Typography>
+            <Select fullWidth value={form.expenseType} onChange={e => setForm({...form, expenseType: e.target.value})}
+              sx={{ bgcolor: COLORS.card, borderRadius: "14px", height: 52, "& fieldset": { borderColor: COLORS.border } }}>
+              {["Income", "Expense", "Savings", "BC1" ,"BC2"].map(o => <MenuItem key={o} value={o}>{o}</MenuItem>)}
+            </Select>
+          </Box>
+          <Box sx={{ flex: 1 }}>
+            <Typography sx={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.1em", color: COLORS.text3, mb: 1 }}>ACCOUNT</Typography>
+            <Select fullWidth value={form.account} onChange={e => setForm({...form, account: e.target.value})}
+              sx={{ bgcolor: COLORS.card, borderRadius: "14px", height: 52, "& fieldset": { borderColor: COLORS.border } }}>
+              {["Cash", "Bank", "UPI", "Card"].map(o => <MenuItem key={o} value={o}>{o}</MenuItem>)}
+            </Select>
+          </Box>
         </Box>
 
         {/* DEFAULT */}
-        <Box sx={{
-          bgcolor: COLORS.card,
-          border: `1px solid ${COLORS.border}`,
-          borderRadius: "14px",
-          px: 2, py: 1.2,
-          display: "flex", justifyContent: "space-between", alignItems: "center"
-        }}>
+        <Box sx={{ bgcolor: COLORS.card, border: `1px solid ${COLORS.border}`, borderRadius: "14px", px: 2, py: 1.2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Box>
             <Typography sx={{ fontSize: 13.5, fontWeight: 600 }}>Set as default</Typography>
-            <Typography sx={{ fontSize: 12, color: COLORS.text2 }}>Use {account} for future</Typography>
+            <Typography sx={{ fontSize: 12, color: COLORS.text2 }}>Use {form.account} for future</Typography>
           </Box>
-          <Switch size="small" sx={{ "& .MuiSwitch-thumb": { bgcolor: "white" } }} />
+          <Switch checked={form.isDefault} onChange={e => setForm({...form, isDefault: e.target.checked})} size="small" />
         </Box>
 
         {/* DATE TIME */}
         <Box sx={{ display: "flex", gap: 1.5 }}>
           <Box sx={{ flex: 1 }}>
-            <Typography sx={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.1em", color: COLORS.text3, mb: 1 }}>DATE</Typography>
-            <TextField fullWidth type="date" defaultValue="2026-05-13" sx={{
-              "& .MuiOutlinedInput-root": { bgcolor: COLORS.card, borderRadius: "14px", height: 50, "& fieldset": { borderColor: COLORS.border }, "& input": { color: COLORS.text, fontSize: 13 } }
-            }} />
+            <Typography sx={{ fontSize: 10, fontWeight: 600, color: COLORS.text3, mb: 1 }}>DATE</Typography>
+            <TextField fullWidth type="date" value={form.date} onChange={e => setForm({...form, date: e.target.value})} sx={commonInputSx} />
           </Box>
           <Box sx={{ flex: 1 }}>
-            <Typography sx={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.1em", color: COLORS.text3, mb: 1 }}>TIME</Typography>
-            <TextField fullWidth type="time" defaultValue="14:30" sx={{
-              "& .MuiOutlinedInput-root": { bgcolor: COLORS.card, borderRadius: "14px", height: 50, "& fieldset": { borderColor: COLORS.border }, "& input": { color: COLORS.text, fontSize: 13 } }
-            }} />
+            <Typography sx={{ fontSize: 10, fontWeight: 600, color: COLORS.text3, mb: 1 }}>TIME</Typography>
+            <TextField fullWidth type="time" value={form.time} onChange={e => setForm({...form, time: e.target.value})} sx={commonInputSx} />
           </Box>
         </Box>
 
         {/* TAGS */}
         <Box>
-          <Typography sx={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.1em", color: COLORS.text3, mb: 1.2 }}>TAGS</Typography>
+          <Typography sx={{ fontSize: 10, fontWeight: 600, color: COLORS.text3, mb: 1.2 }}>TAGS</Typography>
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
             {allTags.map(t => {
-              const active = tags.includes(t);
+              const active = form.tags.includes(t);
               return (
-                <Chip
-                  key={t}
-                  label={t}
-                  onClick={() => setTags(p => p.includes(t) ? p.filter(x => x !== t) : [...p, t])}
+                <Chip key={t} label={t} onClick={() => handleTagToggle(t)}
                   sx={{
-                    height: 32,
-                    borderRadius: "10px",
-                    fontSize: 12.5, fontWeight: active ? 600 : 450,
-                    bgcolor: active ? COLORS.text : COLORS.card,
-                    color: active ? "#000" : COLORS.text2,
-                    border: `1px solid ${active ? COLORS.text : COLORS.border}`,
-                    transition: "all .15s ease"
+                    height: 34, borderRadius: "10px", fontSize: 13, fontWeight: active ? 600 : 500,
+                    bgcolor: active ? COLORS.activeTag : COLORS.card,
+                    color: active ? "#fff" : COLORS.text2,
+                    border: `1px solid ${active ? COLORS.activeTag : COLORS.border}`,
                   }}
                 />
               )
@@ -177,35 +167,29 @@ export default function AddExpenseModal({ open, onClose }) {
 
         {/* NOTE */}
         <Box>
-          <Typography sx={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.1em", color: COLORS.text3, mb: 1 }}>NOTE</Typography>
-          <TextField fullWidth multiline minRows={2} placeholder="What was this for?" sx={{
-            "& .MuiOutlinedInput-root": {
-              bgcolor: COLORS.card, borderRadius: "14px",
-              "& fieldset": { borderColor: COLORS.border },
-              "& textarea": { color: COLORS.text, fontSize: 14, "&::placeholder": { color: COLORS.text3 } }
-            }
-          }} />
+          <Typography sx={{ fontSize: 10, fontWeight: 600, color: COLORS.text3, mb: 1 }}>NOTE</Typography>
+          <TextField fullWidth multiline minRows={2} placeholder="What was this for?" value={form.note}
+            onChange={e => setForm({...form, note: e.target.value})}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                bgcolor: COLORS.card, borderRadius: "14px",
+                "& fieldset": { borderColor: COLORS.border },
+                "& textarea": { fontSize: 14 }
+              }
+            }} />
         </Box>
 
-        {/* FOOTER BUTTON */}
+        {/* FOOTER */}
         <Box sx={{ mt: "auto", pt: 2 }}>
-          <Button fullWidth sx={{
-            bgcolor: COLORS.text,
-            color: "#000",
-            height: 54,
-            borderRadius: "16px",
-            fontSize: 15, fontWeight: 700,
-            letterSpacing: "-0.01em",
-            textTransform: "none",
-            "&:hover": { bgcolor: "#EAEAEA" }
-          }}>
-            Save expense
+          <Button fullWidth onClick={handleSave} disabled={!form.amount}
+            sx={{
+              bgcolor: COLORS.text, color: "#fff", height: 54, borderRadius: "16px",
+              fontSize: 15, fontWeight: 700, textTransform: "none",
+              "&:hover": { bgcolor: "#1E293B" }, "&:disabled": { bgcolor: "#E2E8F0", color: "#94A3B8" }
+            }}>
+            Save expense - Rs.{form.amount || 0}
           </Button>
-          <Typography sx={{ textAlign: "center", fontSize: 11, color: COLORS.text3, mt: 1.5, fontWeight: 500 }}>
-            Swipe down or tap X to close
-          </Typography>
         </Box>
-
       </Box>
     </Dialog>
   )

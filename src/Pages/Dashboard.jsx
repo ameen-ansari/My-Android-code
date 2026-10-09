@@ -33,7 +33,7 @@ export default function Dashboard() {
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <Box>
           <Typography sx={{ fontSize: 11, color: C.text2, fontWeight: 600, letterSpacing: "0.08em" }}>THU • 13 MAY • EVENING</Typography>
-          <Typography sx={{ fontSize: 22, fontWeight: 800, letterSpacing: "-0.03em", mt: 0.3 }}>hamza<span style={{ color: C.violet }}>.</span></Typography>
+          <Typography sx={{ fontSize: 22, fontWeight: 800, letterSpacing: "-0.03em", mt: 0.3 }}>Ameen<span style={{ color: C.violet }}>.</span></Typography>
         </Box>
         <Box sx={{ width: 40, height: 40, borderRadius: "14px", background: `linear-gradient(135deg, ${C.violet}, ${C.indigo})`, display: "grid", placeItems: "center", fontWeight: 800 }}>H</Box>
       </Box>
@@ -44,7 +44,7 @@ export default function Dashboard() {
         <Typography sx={{ fontSize: 10, fontWeight: 800, letterSpacing: "0.15em", opacity: 0.7 }}>TOTAL BALANCE</Typography>
         <Box sx={{ display: "flex", alignItems: "baseline", gap: 0.6, mt: 1.2 }}>
           <Typography sx={{ fontSize: 16, opacity: 0.8 }}>₹</Typography>
-          <Typography sx={{ fontSize: 42, fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 1 }}>12,840</Typography>
+          <Typography sx={{ fontSize: 42, fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 1 }}>412,840</Typography>
           <Typography sx={{ fontSize: 20, opacity: 0.5 }}>.50</Typography>
         </Box>
         <Box sx={{ display: "flex", gap: 1, mt: 2.8 }}>
