@@ -1,74 +1,113 @@
-import { Avatar, Box, Card, CardContent, Typography, Button, Stack, List, ListItem, ListItemText, Divider, Chip, LinearProgress } from "@mui/material"
+import React, { useState } from 'react';
+import { Avatar, Box, Card, CardContent, Typography, Button, Stack, List, ListItem, ListItemText, Divider, Chip } from "@mui/material"
+import AccountBalanceRoundedIcon from '@mui/icons-material/AccountBalanceRounded';
+import PieChartRoundedIcon from '@mui/icons-material/PieChartRounded';
+import NotificationsRoundedIcon from '@mui/icons-material/NotificationsRounded';
+import LockRoundedIcon from '@mui/icons-material/LockRounded';
+import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
+import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
+import { AccountsModal, BudgetLimitsModal} from '@/Utils/Components/ProfileModals'
+import {AddAccountModal} from '@/Utils/Components/OnAddAccount'
 
-export default function ProfileScreen() {
+const C = {
+  bg: "#F8FAFC", card: "#FFFFFF", border: "#E9EBEF",
+  text: "#0F172A", text2: "#64748B", text3: "#94A3B8",
+}
+
+export default function ProfileScreen({ onLogout }) {
+  const [ accountModal, setAccountModal ] = useState(false);
+  const [ addAccountModal, setAddAccountModal ] = useState(false);
+  const [ budgetLimitModal, setBudgetLimitsModal ] = useState(false);
+  const cardStyle = {
+    borderRadius: "20px", bgcolor: C.card,
+    border: `1px solid ${C.border}`,
+    boxShadow: "0 2px 12px rgba(0,0,0,0.04)", mx: 2,
+  };
+
+  const settings = [
+    { onClick: () => setAccountModal(true), icon: AccountBalanceRoundedIcon, iconBg: "#EEF2FF", iconColor: "#7C5CFF", title: "Accounts", sub: "3 bank accounts linked" },
+    {onClick: () => setBudgetLimitsModal(true),  icon: PieChartRoundedIcon, iconBg: "#FFF7ED", iconColor: "#F59E0B", title: "Budget Limits", sub: "Monthly • Rs 100,000" },
+    { icon: NotificationsRoundedIcon, iconBg: "#ECFDF5", iconColor: "#10B981", title: "Notifications", sub: "Expense alerts on" },
+    { icon: LockRoundedIcon, iconBg: "#FEF2F2", iconColor: "#EF4444", title: "Privacy & Security", sub: "Password, Face ID" },
+    { icon: FileDownloadRoundedIcon, iconBg: "#F0F9FF", iconColor: "#0EA5E9", title: "Export Data", sub: "CSV, PDF" },
+  ];
+
   return (
-    <Box sx={{ bgcolor: "#f8fafc", minHeight: "100vh", pb: 3 }}>
+    <Box sx={{ bgcolor: C.bg, minHeight: "100vh", pb: 3 }}>
 
-      {/* HEADER */}
-      <Box sx={{ background: "linear-gradient(135deg,#111827 0%,#1f2937 100%)", p: 3, pb: 8, borderRadius: "0 0 24px 24px" }}>
-        <Stack direction="row" justifyContent="space-between" alignItems="center">
-          <Typography color="white" fontWeight={700}>Profile</Typography>
-          <Box sx={{ width: 32, height: 32, bgcolor: "rgba(255,255,255,0.1)", borderRadius: 2, display: "flex", alignItems: "center", justifyContent: "center" }}>⚙️</Box>
-        </Stack>
+      {/* CLEAN HEADER - NO ICON IN CORNER */}
+      <Box sx={{ px: 2.5, pt: 3.5, pb: 2 }}>
+        <Typography sx={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", color: C.text3, mb: 0.5 }}>
+          ACCOUNT
+        </Typography>
+        <Typography sx={{ fontSize: 28, fontWeight: 800, letterSpacing: "-0.04em", color: C.text, lineHeight: 1 }}>
+          Profile
+        </Typography>
       </Box>
 
-      {/* USER CARD */}
-      <Card sx={{ mx: 2, mt: -5, borderRadius: 4, boxShadow: "0 10px 30px rgba(0,0,0,0.06)" }}>
-        <CardContent sx={{ textAlign: "center", p: 3 }}>
-          <Avatar src="https://i.pravatar.cc/150" sx={{ width: 72, height: 72, mx: "auto", mb: 1.5 }} />
-          <Typography fontWeight={700} fontSize={18}>Ahmad Khan</Typography>
-          <Typography fontSize={13} color="text.secondary">ahmad.khan@email.com</Typography>
-          <Chip label="Premium Member" size="small" sx={{ mt: 1, bgcolor: "#fef3c7", color: "#b45309", fontWeight: 700, fontSize: 11 }} />
-        </CardContent>
+      {/* USER CARD - Setting is now here if needed */}
+      <Card sx={{ ...cardStyle, mt: 1, p: 0, overflow: "hidden", textAlign: "center" }}>
+        <Box sx={{ p: 3, pb: 2.5 }}>
+          <Avatar src="https://i.pravatar.cc/150?u=ahmad" sx={{ width: 84, height: 84, mx: "auto", mb: 1.5, border: `1px solid ${C.border}` }} />
+          <Typography sx={{ fontWeight: 700, fontSize: 18 }}>Ahmad Khan</Typography>
+          <Typography sx={{ fontSize: 13, color: C.text2, mt: 0.2 }}>ahmad.khan@email.com</Typography>
+          <Chip label="Premium Member" size="small" sx={{ mt: 1.2, bgcolor: "#0F172A", color: "#fff", fontWeight: 600, fontSize: 11, height: 24, borderRadius: "20px" }} />
+        </Box>
+        <Box sx={{ display: "flex", borderTop: `1px solid ${C.border}` }}>
+          <Box sx={{ flex: 1, py: 1.8, textAlign: "center", borderRight: `1px solid ${C.border}` }}>
+            <Typography sx={{ fontWeight: 800, fontSize: 15 }}>128</Typography>
+            <Typography sx={{ fontSize: 11, color: C.text2 }}>Transactions</Typography>
+          </Box>
+          <Box sx={{ flex: 1, py: 1.8, textAlign: "center" }}>
+            <Typography sx={{ fontWeight: 800, fontSize: 15 }}>3</Typography>
+            <Typography sx={{ fontSize: 11, color: C.text2 }}>Accounts</Typography>
+          </Box>
+        </Box>
       </Card>
 
-      {/* BALANCE OVERVIEW */}
-      <Card sx={{ mx: 2, mt: 2, borderRadius: 4, bgcolor: "#111827", color: "white" }}>
+      {/* BALANCE */}
+      <Card sx={{ ...cardStyle, mt: 2 }}>
         <CardContent sx={{ p: 2.5 }}>
-          <Typography fontSize={12} sx={{ opacity: 0.6 }}>Total Balance</Typography>
-          <Typography fontWeight={800} fontSize={28} mt={0.5}>Rs 842,500</Typography>
-          
-          <Stack direction="row" spacing={2} mt={2.5}>
-            <Box sx={{ flex: 1, bgcolor: "rgba(255,255,255,0.08)", p: 1.5, borderRadius: 3 }}>
-              <Typography fontSize={11} sx={{ opacity: 0.6 }}>↑ Income</Typography>
-              <Typography fontWeight={700}>Rs 1.2M</Typography>
-              <LinearProgress variant="determinate" value={75} sx={{ mt: 1, height: 4, borderRadius: 2, bgcolor: "rgba(255,255,255,0.1)", "& .MuiLinearProgress-bar": { bgcolor: "#22c55e" } }} />
+          <Typography sx={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", color: C.text3 }}>TOTAL BALANCE</Typography>
+          <Typography sx={{ fontWeight: 800, fontSize: 30, mt: 0.5 }}>Rs 842,500</Typography>
+          <Stack direction="row" spacing={1.5} mt={2}>
+            <Box sx={{ flex: 1, bgcolor: C.bg, p: 1.5, borderRadius: 3, border: `1px solid ${C.border}` }}>
+              <Typography sx={{ fontSize: 11, color: C.text3 }}>Income</Typography>
+              <Typography sx={{ fontWeight: 700 }}>Rs 1.2M</Typography>
             </Box>
-            <Box sx={{ flex: 1, bgcolor: "rgba(255,255,255,0.08)", p: 1.5, borderRadius: 3 }}>
-              <Typography fontSize={11} sx={{ opacity: 0.6 }}>↓ Expense</Typography>
-              <Typography fontWeight={700}>Rs 3.8L</Typography>
-              <LinearProgress variant="determinate" value={40} sx={{ mt: 1, height: 4, borderRadius: 2, bgcolor: "rgba(255,255,255,0.1)", "& .MuiLinearProgress-bar": { bgcolor: "#ef4444" } }} />
+            <Box sx={{ flex: 1, bgcolor: C.bg, p: 1.5, borderRadius: 3, border: `1px solid ${C.border}` }}>
+              <Typography sx={{ fontSize: 11, color: C.text3 }}>Expense</Typography>
+              <Typography sx={{ fontWeight: 700 }}>Rs 3.8L</Typography>
             </Box>
           </Stack>
         </CardContent>
       </Card>
 
-      {/* SETTINGS */}
-      <Card sx={{ mx: 2, mt: 2, borderRadius: 4 }}>
-        <List dense>
-          {[
-            ["💳", "Accounts", "3 bank accounts linked"],
-            ["📊", "Budget Limits", "Monthly • Rs 100,000"],
-            ["🔔", "Notifications", "Expense alerts on"],
-            ["🔒", "Privacy & Security", "Password, Face ID"],
-            ["💾", "Export Data", "CSV, PDF"],
-          ].map(([icon, title, sub], i, arr) => (
-            <Box key={title}>
-              <ListItem>
-                <Box sx={{ width: 36, height: 36, bgcolor: "#f1f5f9", borderRadius: 2, display: "flex", alignItems: "center", justifyContent: "center", mr: 1.5 }}>{icon}</Box>
-                <ListItemText primary={<Typography fontSize={14} fontWeight={600}>{title}</Typography>} secondary={<Typography fontSize={12} color="text.secondary">{sub}</Typography>} />
-                <Typography color="#cbd5e1">›</Typography>
+      {/* SETTINGS LIST - Setting is here, not in header corner */}
+      <Card sx={{ ...cardStyle, mt: 2, p: 0 }}>
+        <List dense disablePadding>
+          {settings.map((item, i) => (
+            <Box key={item.title}>
+              <ListItem onClick={item.onClick} sx={{ px: 2, py: 1.7, "&:hover": { bgcolor: C.bg } }}>
+                <Box sx={{ width: 36, height: 36, bgcolor: item.iconBg, borderRadius: "10px", display: "grid", placeItems: "center", mr: 1.5, color: item.iconColor }}>
+                  <item.icon sx={{ fontSize: 18 }} />
+                </Box>
+                <ListItemText primary={<Typography sx={{ fontSize: 14, fontWeight: 600 }}>{item.title}</Typography>} secondary={<Typography sx={{ fontSize: 12, color: C.text2 }}>{item.sub}</Typography>} />
+                <ArrowForwardIosRoundedIcon sx={{ fontSize: 14, color: C.text3 }} />
               </ListItem>
-              {i !== arr.length - 1 && <Divider sx={{ ml: 7 }} />}
+              {i !== settings.length - 1 && <Divider sx={{ ml: 7.5, borderColor: C.bg }} />}
             </Box>
           ))}
         </List>
       </Card>
 
-      <Box sx={{ mx: 2, mt: 2 ,pb:16}}>
-        <Button fullWidth variant="contained" sx={{ bgcolor: "#111827", borderRadius: 3, py: 1.4, textTransform: "none", fontWeight: 700 }}>Edit Profile</Button>
-        <Button fullWidth variant="text" color="error" sx={{ mt: 1, textTransform: "none" }}>Log Out</Button>
+      <Box sx={{ mx: 2, mt: 3, pb: 10 }}>
+        <Button fullWidth sx={{ bgcolor: C.text, color: "#fff", borderRadius: "14px", py: 1.6, textTransform: "none", fontWeight: 700 }}>Edit Profile</Button>
+        <Button onClick={onLogout} fullWidth sx={{ mt: 1, color: "#EF4444", textTransform: "none" }}>Log Out</Button>
       </Box>
+      <AccountsModal open={accountModal} onClose={() => setAccountModal(false)} onAdd ={()=>setAddAccountModal(true)}/>
+      <BudgetLimitsModal open={budgetLimitModal} onClose={() => setBudgetLimitsModal(false)} />
+      <AddAccountModal open={addAccountModal} onClose={() => setAddAccountModal(false)} />
 
     </Box>
   )
